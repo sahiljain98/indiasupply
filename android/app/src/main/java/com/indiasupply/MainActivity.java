@@ -1,7 +1,7 @@
 package com.indiasupply;
 import com.reactnativenavigation.controllers.SplashActivity;
 import android.os.Bundle;
-import com.sutrareactnative.R;
+import com.indiasupply.R;
 import android.support.annotation.Nullable;
 import android.content.Intent; // <--- import
 import android.content.res.Configuration; // <--- import
