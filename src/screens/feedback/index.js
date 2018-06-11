@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 
-export default class AboutUs extends Component {
+export default class Feedback extends Component {
 
   constructor(props) {
     super(props);
 
-    this.props.navigator.setTitle({
-      title: 'About'
-    });
+    // this.props.navigator.setTitle({
+    //   title: 'Feedback'
+    // });
   }
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>AboutUs</Text>
+        <Text style={styles.header}>Feedback</Text>
       </View>
     );
   }
