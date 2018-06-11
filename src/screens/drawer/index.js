@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 
+import Actions from '../../resources/actions';
+
 
 export default class Drawer extends React.Component {
 

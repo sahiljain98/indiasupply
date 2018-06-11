@@ -56,7 +56,7 @@ const AppConfig = {
                 title: 'Search'
             }
         ]
-    }
+    }    
 };
 
 export default AppConfig;

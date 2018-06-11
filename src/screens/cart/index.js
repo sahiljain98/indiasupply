@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 
+import Actions from '../../resources/actions';
+
 export default class Cart extends Component {
 
   constructor(props) {
