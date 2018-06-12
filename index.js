@@ -6,13 +6,11 @@ import { registerScreens } from './screens';
 import AppConfig from './src/resources/appconfig';
 import Colors from './src/resources/color';
 
-
 import HomeIcon from './src/resources/icons/home.png';
 import FeedbackIcon from './src/resources/icons/feedback.png';
 import AccountIcon from './src/resources/icons/account.png';
 import FavouriteIcon from './src/resources/icons/favorite.png';
 import MoreIcon from './src/resources/icons/more.png';
-
 
 
 // import configureStore from './src/reducer/configStore';
