@@ -56,7 +56,7 @@ class Home extends Component {
 
         {this.state.categoryList.map((item, index) => {
           return (
-            <CategoryTile key={index} item={item} />
+            <CategoryTile reference={this} key={index} item={item} />
           );
         })}
 

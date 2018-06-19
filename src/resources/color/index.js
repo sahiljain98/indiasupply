@@ -5,7 +5,7 @@ const Color = {
     PrimaryColor: '#fbfbfb',
     PrimaryTextColor: '#434343',
     SecondoryTextColor: '#bababa',
-    HighlightPrimaryColor: '#eaeaea',
+    HighlightPrimaryColor: '#efefef',
     HighlightSecondaryColor: '#eaeaea'
 
 };

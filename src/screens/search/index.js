@@ -19,7 +19,7 @@ export default class Search extends Component {
   render() {
     let { searchString } = this.state;
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1,backgroundColor:'white' }}>
         <View style={{ backgroundColor: Colors.PrimaryColor, elevation: 2 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 16, marginVertical: 8, padding: 8, borderRadius: 32, backgroundColor: "white" }}>
             <Image source={SearchIcon} style={{ width: 20, height: 20, marginVertical: 8, marginRight: 12, marginLeft: 4 }} />
