@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image,AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 
 import Actions from '../../resources/actions';
 import AsyncStore from '../../library/asyncStore'
 
-export default class Feedback extends Component {
+import * as userActions from '../../reducer/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+class Feedback extends Component {
 
   constructor(props) {
     super(props);
-   
+
     //initialize navigator event
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
   }
@@ -21,32 +25,24 @@ export default class Feedback extends Component {
     );
   }
 
-  componentDidMount(){
-    AsyncStorage.getItem(AsyncStore.Constants.SESSION_ID).then((value)=>{
-      console.log('session id from async store is',value); 
-    }).catch((E)=>{
-      console.log(E);
-    })
-  }
 
-   /**
-  * handling navigator event
-  * @param {*} event event name
-  */
- onNavigatorEvent = (event) => {
-  if (event.type == 'NavBarButtonPress') {
-    if (event.id == 'menu') {
-      Actions.startToggleDrawer(this);
-    }
-    else if (event.id == 'Cart') {
-      Actions.openModalProps(this, 'Cart', null);
-
-    }
-    else if (event.id == 'Search') {
-      Actions.openModalProps(this, 'Search', null);
+  /**
+ * handling navigator event
+ * @param {*} event event name
+ */
+  onNavigatorEvent = (event) => {
+    if (event.type == 'NavBarButtonPress') {
+      if (event.id == 'menu') {
+        Actions.startToggleDrawer(this);
+      }
+      else if (event.id == 'Cart') {
+        Actions.openModalProps(this, 'Cart', null);
+      }
+      else if (event.id == 'Search') {
+        Actions.openModalProps(this, 'Search', null);
+      }
     }
   }
-}
 
 }
 
@@ -60,3 +56,19 @@ const styles = StyleSheet.create({
     marginVertical: 10
   }
 });
+
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    service: state.service
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(userActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Feedback);

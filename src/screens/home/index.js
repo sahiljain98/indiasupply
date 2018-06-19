@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableHighlight, ScrollView, Text, FlatList, TouchableOpacity,AsyncStorage } from 'react-native';
+import { View, Image, TouchableHighlight, ScrollView, Text, FlatList, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 import axios from 'axios';
 
@@ -16,7 +16,11 @@ import dotPinkIcon from '../../resources/icons/dot_pink.png';
 import upArrow from '../../resources/icons/up-arrow.png';
 import downArrow from '../../resources/icons/down-arrow.png';
 
-export default class Home extends Component {
+import * as userActions from '../../reducer/action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+class Home extends Component {
 
   constructor(props) {
     super(props);
@@ -26,26 +30,7 @@ export default class Home extends Component {
       promotionalBannerList: ["https://www.bmw.ca/content/dam/bmw/common/all-models/4-series/gran-coupe/2017/images-and-videos/images/BMW-4-series-gran-coupe-images-and-videos-1920x1200-10.jpg.asset.1487328157424.jpg",
         "http://tw.mensuno.asia/sites/default/files/ferrari-f12-tdf-01-960x640.jpg", "https://www.bmw.ca/content/dam/bmw/common/all-models/4-series/gran-coupe/2017/images-and-videos/images/BMW-4-series-gran-coupe-images-and-videos-img-890x501-01.jpg/_jcr_content/renditions/cq5dam.resized.img.890.medium.time1487328154325.jpg"],
 
-      wearCategoryList: [
-        { url: 'https://content3.jdmagicbox.com/comp/mumbai/c6/022pxx22.xx22.141119140050.z9c6/catalogue/destiny-ethnic-wear-dadar-west-mumbai-ethnic-wear-retailers-14mjzz9.jpg', name: 'Ethinic wear' },
-        { url: 'http://www.acetshirt.com/wp-content/uploads/2017/07/casual-wear-for-men-fall-staples-for-men-galla-zywtzan-.jpg', name: 'Casuals' },
-        { url: 'https://i.pinimg.com/736x/8f/b8/53/8fb85391c23600ca203f2ec56b7f9373--mens-fashion-accessories-shoe-photography.jpg', name: 'Footwear' },
-        { url: 'https://www.ifazone.in/ItemImages/2018/Product_317201855423PMBG7AD01_Main_BG7AD01_3.jpg', name: 'Formals' }
-      ],
-      electronicsCategoryList: [
-        { url: 'https://img.bfmtv.com/c/630/420/081b/38d96f223c90df99fd7422669e7f.png', name: 'Laptops' },
-        { url: 'https://images.techhive.com/images/article/2016/12/iphone-mac-pixabay-100698865-large.jpg', name: 'Mobiles' },
-        { url: 'http://im.hunt.in/cg/Him/Palampur/City-Guide/electronics.jpg', name: 'Home Applicances' },
-        { url: 'https://pisces.bbystatic.com/image2/BestBuy_US/store/ee/2015/global/outlet/flex_wearable_tech.jpg', name: 'Wearables' }
-      ],
-      suggestionCategoryList: [
-        { url: 'https://i.pinimg.com/736x/8f/b8/53/8fb85391c23600ca203f2ec56b7f9373--mens-fashion-accessories-shoe-photography.jpg', name: 'Footwear' },
-        { url: 'https://www.ifazone.in/ItemImages/2018/Product_317201855423PMBG7AD01_Main_BG7AD01_3.jpg', name: 'Formals' },
-        { url: 'https://content3.jdmagicbox.com/comp/mumbai/c6/022pxx22.xx22.141119140050.z9c6/catalogue/destiny-ethnic-wear-dadar-west-mumbai-ethnic-wear-retailers-14mjzz9.jpg', name: 'Ethinic wear' },
-        { url: 'https://images.techhive.com/images/article/2016/12/iphone-mac-pixabay-100698865-large.jpg', name: 'Mobiles' },
-        { url: 'http://im.hunt.in/cg/Him/Palampur/City-Guide/electronics.jpg', name: 'Home Applicances' },
-        { url: 'http://www.acetshirt.com/wp-content/uploads/2017/07/casual-wear-for-men-fall-staples-for-men-galla-zywtzan-.jpg', name: 'Casuals' }
-      ]
+      categoryList: []
 
 
     }
@@ -69,7 +54,7 @@ export default class Home extends Component {
           Pick Your Interest
         </Text>
 
-        {this.state.suggestionCategoryList.map((item, index) => {
+        {this.state.categoryList.map((item, index) => {
           return (
             <CategoryTile key={index} item={item} />
           );
@@ -79,13 +64,9 @@ export default class Home extends Component {
     );
   }
 
-  componentWillMount(){
-
-    this.getSession('priti','admin123');
+  componentDidMount() {
+    this.getSession();
   }
-
-
-
 
   /**
    * get images crausel
@@ -125,20 +106,59 @@ export default class Home extends Component {
   }
 
 
+  /**
+   * get session id from local else hit api
+   */
+  getSession() {
+    AsyncStorage
+      .getItem(AsyncStore.Constants.SESSION_ID)
+      .then((sessionId) => {
+        console.log(sessionId);
+
+        if (sessionId == null) {
+          this.getSessionByCredentials('priti', 'admin123');
+        } else {
+          console.log('in else');
+
+          //hit api
+          this.getCategoryList(sessionId);
+
+          //put session id in redux
+          let { action } = this.props;
+          action.sessionId(sessionId);
+
+
+        }
+      })
+      .catch((e) => {
+        this.callAlert('Error!!!', e)
+      })
+  }
+
 
   /**
- * api hit
- * get session
- */
-  getSession = async (username, password) => {
+   * api hit
+   * get session
+   */
+  getSessionByCredentials = async (username, password) => {
     var userParms = {
       "username": username,
       "password": password
     }
     axios.post(`${Network.url}integration/admin/token`, userParms)
       .then((response) => {
-       console.log('session token',response.data);
-       AsyncStore.put(AsyncStore.Constants.SESSION_ID,response.data);
+        console.log('session token', response.data);
+
+        //put data into async store
+        AsyncStore.put(AsyncStore.Constants.SESSION_ID, response.data);
+
+
+        //hit api
+        this.getCategoryList(response.data);
+
+        //put session id in redux
+        let { action } = this.props;
+        action.sessionId(response.data);
       })
       .catch((error) => {
         this.callAlert("Session Id not generated")
@@ -146,6 +166,23 @@ export default class Home extends Component {
 
   }
 
+  /**
+    * api Hit
+    * get category list
+    * @param {*} sessionId token id
+    */
+  getCategoryList = (sessionId) => {
+    var config = {
+      headers: { 'Authorization': "bearer " + sessionId }
+    };
+    axios.get(`${Network.url}categories/`, config)
+      .then((response) => {
+        console.log('categories response', response.data.children_data);
+        this.setState({ categoryList: response.data.children_data });
+      }).catch((error) => {
+        console.log('categories error:', error)
+      });
+  }
 
   /**
   * handling navigator event
@@ -166,19 +203,34 @@ export default class Home extends Component {
     }
   }
 
-    /**
-  * calling alert with value title
-  * @param {*} value title
-  */
- callAlert = (value) => {
-  Alert.alert(
-    value,
-    "",
-    [
-      { text: 'OK', onPress: () => console.log('OK pressed') },
-    ],
-    { cancelable: false }
-  )
-}
+  /**
+* calling alert with value title
+* @param {*} value title
+*/
+  callAlert = (value) => {
+    Alert.alert(
+      value,
+      "",
+      [
+        { text: 'OK', onPress: () => console.log('OK pressed') },
+      ],
+      { cancelable: false }
+    )
+  }
 
 }
+
+
+function mapStateToProps(state, ownProps) {
+  return {
+    service: state.service
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    action: bindActionCreators(userActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
