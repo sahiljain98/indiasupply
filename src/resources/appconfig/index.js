@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 
 import Colors from '../color';
+import Strings from '../strings';
 
 import DrawerIcon from '../icons/menu.png';
 import SearchIcon from '../icons/search.png';
@@ -10,7 +11,7 @@ import CartBigIcon from '../icons/cart_big.png';
 
 const AppConfig = {
     //app name
-    AppName: 'IndiaSupply',
+    AppName: Strings.AppName,
 
     //navigation configuration
     NavbarConfig: {

@@ -1,20 +1,12 @@
 import React, { Component } from 'react';
-import { View, Image, TouchableHighlight, ScrollView, Text, FlatList, TouchableOpacity,AsyncStorage } from 'react-native';
+import { View, Image, TouchableHighlight, ScrollView, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Navigation } from 'react-native-navigation';
-import axios from 'axios';
 
 import ImageSlider from './react-native-image-slider';
 import Actions from '../../resources/actions';
-import Color from '../../resources/color';
-import Network from '../../library/network';
-import AsyncStore from '../../library/asyncStore';
-
-import CategoryTile from '../../components/categorytile';
 
 import dotGreyIcon from '../../resources/icons/dot_grey.png';
 import dotPinkIcon from '../../resources/icons/dot_pink.png';
-import upArrow from '../../resources/icons/up-arrow.png';
-import downArrow from '../../resources/icons/down-arrow.png';
 
 export default class Home extends Component {
 
@@ -62,29 +54,14 @@ export default class Home extends Component {
         onLayout={(event) => { this.setState({ layoutWidth: event.nativeEvent.layout.width }) }}>
         {/* image crausel */}
         {this.getImageCrausel(this.state.promotionalBannerList, 3000)}
-
-        {/* for categery header */}
-        <Text
-          style={{ fontSize: 18, alignContent: 'center', paddingTop: 8, paddingBottom: 12, paddingHorizontal: 16, color: Color.PrimaryTextColor }}>
-          Pick Your Interest
-        </Text>
-
-        {this.state.suggestionCategoryList.map((item, index) => {
-          return (
-            <CategoryTile key={index} item={item} />
-          );
-        })}
+        {/* category widget */}
+        {this.getCategoryWidget('Latest Trends', this.state.wearCategoryList)}
+        {this.getCategoryWidget('Popular This Week', this.state.electronicsCategoryList)}
+        {this.getCategoryWidget('You may also like', this.state.suggestionCategoryList)}
 
       </ScrollView>
     );
   }
-
-  componentWillMount(){
-
-    this.getSession('priti','admin123');
-  }
-
-
 
 
   /**
@@ -125,25 +102,41 @@ export default class Home extends Component {
   }
 
 
+  /**
+   * get category widget
+   * @param {*}name category name
+   * @param {*}list category list
+   */
+  getCategoryWidget = (name, list) => {
+    return (<View style={{ marginVertical: 4 }}>
+      {/* category header */}
+      <Text style={{ fontSize: 20, color: 'black', paddingVertical: 8, paddingHorizontal: 16 }}>{name}</Text>
+      <FlatList
+        data={list}
+        horizontal
+        keyExtractor={(item, index) => item.name}
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item }) => this.getCategoryTile(item.url, item.name)}
+      />
+    </View>);
+  }
 
   /**
- * api hit
- * get session
- */
-  getSession = async (username, password) => {
-    var userParms = {
-      "username": username,
-      "password": password
-    }
-    axios.post(`${Network.url}integration/admin/token`, userParms)
-      .then((response) => {
-       console.log('session token',response.data);
-       AsyncStore.put(AsyncStore.Constants.SESSION_ID,response.data);
-      })
-      .catch((error) => {
-        this.callAlert("Session Id not generated")
-      });
-
+   * get category tile
+   * @param {*} url image url
+   * @param {*} text item name
+   */
+  getCategoryTile = (url, name) => {
+    return (
+      <View key={name} style={{ width: 128, margin: 8 }}>
+        <TouchableOpacity style={{ backgroundColor: '#eaeaea' }}>
+          <Image source={{ uri: url }}
+            style={{ width: 128, height: 128, borderRadius: 2, resizeMode: 'cover' }} />
+        </TouchableOpacity>
+        <Text style={{ fontSize: 16, color: 'black', textAlign: 'center', padding: 4 }}
+          ellipsizeMode={'tail'} numberOfLines={1}>{name}</Text>
+      </View>
+    );
   }
 
 
@@ -165,20 +158,5 @@ export default class Home extends Component {
       }
     }
   }
-
-    /**
-  * calling alert with value title
-  * @param {*} value title
-  */
- callAlert = (value) => {
-  Alert.alert(
-    value,
-    "",
-    [
-      { text: 'OK', onPress: () => console.log('OK pressed') },
-    ],
-    { cancelable: false }
-  )
-}
 
 }

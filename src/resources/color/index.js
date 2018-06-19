@@ -4,7 +4,9 @@ const Color = {
     AccentSecondoryColor: '#e8235e',
     PrimaryColor: '#fbfbfb',
     PrimaryTextColor: '#434343',
-    SecondoryTextColor: '#bababa'
+    SecondoryTextColor: '#bababa',
+    HighlightPrimaryColor: '#eaeaea',
+    HighlightSecondaryColor: '#efefef'
 
 };
 

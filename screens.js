@@ -12,16 +12,16 @@ import Drawer from './src/screens/drawer';
 
 
 // register all screens of the app (including internal ones)
-export function registerScreens() {
+export function registerScreens(store, Provider) {
 
-    Navigation.registerComponent('Home', () => Home);
-    Navigation.registerComponent('Feedback', () => Feedback);
-    Navigation.registerComponent('Account', () => Account);
-    Navigation.registerComponent('Favourite', () => Favourite);
-    Navigation.registerComponent('More', () => More);
-    Navigation.registerComponent('Cart', () => Cart);
-    Navigation.registerComponent('Search', () => Search);
+    Navigation.registerComponent('Home', () => Home, store, Provider);
+    Navigation.registerComponent('Feedback', () => Feedback, store, Provider);
+    Navigation.registerComponent('Account', () => Account, store, Provider);
+    Navigation.registerComponent('Favourite', () => Favourite, store, Provider);
+    Navigation.registerComponent('More', () => More, store, Provider);
+    Navigation.registerComponent('Cart', () => Cart, store, Provider);
+    Navigation.registerComponent('Search', () => Search, store, Provider);
 
-    Navigation.registerComponent('Drawer', () => Drawer);
+    Navigation.registerComponent('Drawer', () => Drawer, store, Provider);
 
 }

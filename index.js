@@ -1,4 +1,4 @@
-// import { Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import { Navigation } from 'react-native-navigation';
 
 import { registerScreens } from './screens';
@@ -13,11 +13,11 @@ import FavouriteIcon from './src/resources/icons/favorite.png';
 import MoreIcon from './src/resources/icons/more.png';
 
 
-// import configureStore from './src/reducer/configStore';
+import configureStore from './src/reducer/configStore/index.js';
 
-// const store = configureStore(); //get store
+const store = configureStore(); //get store
 
-registerScreens(); // this is where you register all of your app's screens
+registerScreens(store, Provider); // this is where you register all of your app's screens
 
 // console.disableYellowBox = true; //disable warning
 
