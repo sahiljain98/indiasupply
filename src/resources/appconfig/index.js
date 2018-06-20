@@ -12,6 +12,8 @@ import CartBigIcon from '../icons/cart_big.png';
 const AppConfig = {
     //app name
     AppName: Strings.AppName,
+    SearchIcon: (Platform.OS == 'android') ? SearchBigIcon : SearchIcon,
+    CartIcon: (Platform.OS == 'android') ? CartBigIcon : CartIcon,
 
     //navigation configuration
     NavbarConfig: {
@@ -57,7 +59,7 @@ const AppConfig = {
                 title: 'Search'
             }
         ]
-    }    
+    }
 };
 
 export default AppConfig;

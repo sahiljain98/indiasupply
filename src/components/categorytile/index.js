@@ -27,7 +27,7 @@ export default class CategoryTile extends Component {
           onPress={() => {
             let flag = !isVisibleChildList;
 
-            !isChildItemExist ? Actions.openModalProps(reference, "ProductList", item.name) :
+            !isChildItemExist ? Actions.openModalProps(reference, "ProductList", { name: item.name, id: item.id }) :
               this.setState({ isVisibleChildList: flag })
           }}
           style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', elevation: 2, marginVertical: 2, marginHorizontal: 12, borderRadius: 2 }}>
@@ -42,7 +42,7 @@ export default class CategoryTile extends Component {
             item.children_data.map((item, index) => {
               return (
                 <TouchableOpacity key={'item' + index}
-                onPress={()=>Actions.openModalProps(reference, "ProductList", item.name) }
+                  onPress={() => Actions.openModalProps(reference, "ProductList", { name: item.name, id: item.id })}
                   style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: Color.HighlightPrimaryColor, marginVertical: 1, marginHorizontal: 12, borderRadius: 2 }}>
                   <Text style={{ fontSize: 14, padding: 12, color: 'black' }}>
                     {item.name}

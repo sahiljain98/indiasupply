@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Image, TouchableHighlight, ScrollView, Text, FlatList, TouchableOpacity, AsyncStorage, Alert } from 'react-native';
-import { Navigation } from 'react-native-navigation';
 import axios from 'axios';
 
 import ImageSlider from './react-native-image-slider';
@@ -30,7 +29,9 @@ class Home extends Component {
       promotionalBannerList: ["https://www.bmw.ca/content/dam/bmw/common/all-models/4-series/gran-coupe/2017/images-and-videos/images/BMW-4-series-gran-coupe-images-and-videos-1920x1200-10.jpg.asset.1487328157424.jpg",
         "http://tw.mensuno.asia/sites/default/files/ferrari-f12-tdf-01-960x640.jpg", "https://www.bmw.ca/content/dam/bmw/common/all-models/4-series/gran-coupe/2017/images-and-videos/images/BMW-4-series-gran-coupe-images-and-videos-img-890x501-01.jpg/_jcr_content/renditions/cq5dam.resized.img.890.medium.time1487328154325.jpg"],
 
-      categoryList: []
+      categoryList: [],
+
+      defaultText: 'Loading...'
 
 
     }
@@ -54,11 +55,11 @@ class Home extends Component {
           Pick Your Interest
         </Text>
 
-        {this.state.categoryList.map((item, index) => {
+        {(this.state.categoryList && this.state.categoryList.length) > 0 ? this.state.categoryList.map((item, index) => {
           return (
             <CategoryTile reference={this} key={index} item={item} />
           );
-        })}
+        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>{this.state.defaultText}</Text></View>}
 
       </ScrollView>
     );
@@ -161,7 +162,7 @@ class Home extends Component {
         action.sessionId(response.data);
       })
       .catch((error) => {
-        this.callAlert("Session Id not generated")
+        this.callAlert("Session Id not generated");
       });
 
   }
@@ -177,10 +178,11 @@ class Home extends Component {
     };
     axios.get(`${Network.url}categories/`, config)
       .then((response) => {
-        console.log('categories response', response.data.children_data);
-        this.setState({ categoryList: response.data.children_data });
+        if (response.data.children_data && response.data.children_data.length > 0)
+          this.setState({ categoryList: response.data.children_data });
+        else this.setState({defaultText:"No Data Found!!!"})  
       }).catch((error) => {
-        console.log('categories error:', error)
+        Actions.showNotifier(this, 'categories error : ' + error, 1);
       });
   }
 

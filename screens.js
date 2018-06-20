@@ -11,6 +11,8 @@ import Search from './src/screens/search';
 import Drawer from './src/screens/drawer';
 
 import ProductList from './src/screens/productlist';
+import Filter from './src/screens/filter';
+import Sort from './src/screens/sort';
 
 // register all screens of the app (including internal ones)
 export function registerScreens(store, Provider) {
@@ -26,4 +28,6 @@ export function registerScreens(store, Provider) {
     Navigation.registerComponent('Drawer', () => Drawer, store, Provider);
 
     Navigation.registerComponent('ProductList', () => ProductList, store, Provider);
+    Navigation.registerComponent('Filter', () => Filter, store, Provider);
+    Navigation.registerComponent('Sort', () => Sort, store, Provider);
 }

@@ -7,7 +7,7 @@ import * as userActions from '../../reducer/action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-class Cart extends Component {
+class Sort extends Component {
 
   constructor(props) {
     super(props);
@@ -15,7 +15,7 @@ class Cart extends Component {
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <Text>Cart</Text>
+        <Text>Sort</Text>
       </View>
     );
   }
@@ -34,4 +34,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default connect(mapStateToProps, mapDispatchToProps)(Sort);

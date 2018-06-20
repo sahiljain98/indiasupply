@@ -42,6 +42,20 @@ startToggleDrawer = (ref) => {
     });
 }
 
+/**
+  * show notifier
+  * @param {*} ref reference
+  * @param {*} text display text 
+  * @param {*} transitionTime time duration
+  */
+showNotifier = (ref, text, transitionTime) => {
+    ref.props.navigator.showInAppNotification({
+        screen: "Notifier", // unique ID registered with Navigation.registerScreen
+        passProps: { propsData: text }, // simple serializable object that will pass as props to the in-app notification (optional)
+        autoDismissTimerSec: transitionTime // auto dismiss notification in seconds
+    });
+}
+
 
 module.exports = {
     openComponentProps: openComponentProps,
