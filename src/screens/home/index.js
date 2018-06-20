@@ -59,7 +59,7 @@ class Home extends Component {
           return (
             <CategoryTile reference={this} key={index} item={item} />
           );
-        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>{this.state.defaultText}</Text></View>}
+        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',marginTop:80 }}><Text>{this.state.defaultText}</Text></View>}
 
       </ScrollView>
     );

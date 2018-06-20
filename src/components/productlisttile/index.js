@@ -22,7 +22,10 @@ export default class ProductListTile extends Component {
     render() {
         let { item, reference, isWishlisted } = this.state;
         return (
-            <TouchableHighlight>
+            <TouchableHighlight
+                underlayColor="transparent"
+
+                onPress={() => Actions.openComponentProps(reference, 'ProductDetail', { sku: item.sku })}>
                 <View style={{ flex: 1, backgroundColor: 'white', elevation: 1, marginVertical: 4, borderRadius: 2 }}>
                     <View
                         style={{ flex: 1, flexDirection: 'row' }}>
