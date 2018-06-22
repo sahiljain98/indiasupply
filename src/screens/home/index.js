@@ -62,12 +62,6 @@ class Home extends Component {
           renderItem={({ item, index }) => <CategoryTile reference={this} key={index} item={item} />}
         />
 
-        {/* {(this.state.categoryList && this.state.categoryList.length) > 0 ? this.state.categoryList.map((item, index) => {
-          return (
-            <CategoryTile reference={this} key={index} item={item} />
-          );
-        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 80 }}><Text>{this.state.defaultText}</Text></View>} */}
-
       </ScrollView>
     );
   }
