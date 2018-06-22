@@ -3,7 +3,7 @@ import { AsyncStorage } from 'react-native';
 //all constants define here
 
 
-var Constants = {
+const Constants = {
     SESSION_ID: 'sessionId'
 };
 

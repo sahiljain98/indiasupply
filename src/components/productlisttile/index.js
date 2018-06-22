@@ -5,8 +5,8 @@ import Actions from '../../resources/actions';
 import Color from '../../resources/color';
 
 import NotFoundIcon from '../../resources/icons/notfound_image.png';
-import HeartGreyIcon from '../../resources/icons/heaart_grey.png';
-import HeartRedIcon from '../../resources/icons/heart_red.png';
+import HeartGreyIcon from '../../resources/icons/list_add.png';
+import HeartRedIcon from '../../resources/icons/list_add_filled.png';
 
 export default class ProductListTile extends Component {
 

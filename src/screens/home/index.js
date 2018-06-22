@@ -30,10 +30,8 @@ class Home extends Component {
         "http://tw.mensuno.asia/sites/default/files/ferrari-f12-tdf-01-960x640.jpg", "https://www.bmw.ca/content/dam/bmw/common/all-models/4-series/gran-coupe/2017/images-and-videos/images/BMW-4-series-gran-coupe-images-and-videos-img-890x501-01.jpg/_jcr_content/renditions/cq5dam.resized.img.890.medium.time1487328154325.jpg"],
 
       categoryList: [],
-
-      defaultText: 'Loading...'
-
-
+      isFetching: false,
+      defaultText: ' '
     }
 
     //initialize navigator event
@@ -52,14 +50,23 @@ class Home extends Component {
         {/* for categery header */}
         <Text
           style={{ fontSize: 18, alignContent: 'center', paddingTop: 8, paddingBottom: 12, paddingHorizontal: 16, color: Color.PrimaryTextColor }}>
-          Pick Your Interest
+          {this.state.defaultText}
         </Text>
 
-        {(this.state.categoryList && this.state.categoryList.length) > 0 ? this.state.categoryList.map((item, index) => {
+        <FlatList
+          style={{ flex: 1,minHeight:120 }}
+          data={this.state.categoryList}
+          onRefresh={() => this.onRefresh()}
+          refreshing={this.state.isFetching}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => <CategoryTile reference={this} key={index} item={item} />}
+        />
+
+        {/* {(this.state.categoryList && this.state.categoryList.length) > 0 ? this.state.categoryList.map((item, index) => {
           return (
             <CategoryTile reference={this} key={index} item={item} />
           );
-        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',marginTop:80 }}><Text>{this.state.defaultText}</Text></View>}
+        }) : <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 80 }}><Text>{this.state.defaultText}</Text></View>} */}
 
       </ScrollView>
     );
@@ -106,40 +113,49 @@ class Home extends Component {
 
   }
 
+  /**
+    * refresh feed
+    */
+  onRefresh = () => {
+    this.setState({ isFetching: true, categoryList: [] });
+    // console.log("timeline", this.state.selectedAuthorFilteredFeed, this.state.selectedPublisherFilteredFeed, this.state.selectedlocationFilteredFeed, this.state.selectedCategoryFilteredFeed)
+    this.getSession();
+  }
+
 
   /**
    * get session id from local else hit api
    */
-  getSession() {
-    AsyncStorage
-      .getItem(AsyncStore.Constants.SESSION_ID)
-      .then((sessionId) => {
-        console.log(sessionId);
+  getSession = async () => {
+    try {
+      AsyncStorage.getItem(AsyncStore.Constants.SESSION_ID)
+        .then((sessionId) => {
+          console.log("session id is ",sessionId);
 
-        if (sessionId == null) {
-          this.getSessionByCredentials('priti', 'admin123');
-        } else {
-          console.log('in else');
+          if (sessionId == null) {
+            this.getSessionByCredentials('priti', 'admin123');
+          } else {
+            //hit api
+            this.getCategoryList(sessionId);
 
-          //hit api
-          this.getCategoryList(sessionId);
+            //put session id in redux
+            let { action } = this.props;
+            action.sessionId(sessionId)
+          }
+        });
+    } catch (e) {
+      this.callAlert('Error!!!', e);
+      console.log('Error in session');
+    }
 
-          //put session id in redux
-          let { action } = this.props;
-          action.sessionId(sessionId);
-
-
-        }
-      })
-      .catch((e) => {
-        this.callAlert('Error!!!', e)
-      })
   }
 
 
   /**
    * api hit
    * get session
+   * @param {*} username user name
+   * @param {*} password password
    */
   getSessionByCredentials = async (username, password) => {
     var userParms = {
@@ -151,9 +167,11 @@ class Home extends Component {
         console.log('session token', response.data);
 
         //put data into async store
-        AsyncStore.put(AsyncStore.Constants.SESSION_ID, response.data);
-
-
+        try {
+          AsyncStorage.setItem(AsyncStore.Constants.SESSION_ID, response.data);
+        } catch (e) {
+          console.log('error in saving data', e);
+        }
         //hit api
         this.getCategoryList(response.data);
 
@@ -173,14 +191,20 @@ class Home extends Component {
     * @param {*} sessionId token id
     */
   getCategoryList = (sessionId) => {
+
+    //set default state
+    this.setState({ isFetching: true, defaultText: 'Loading...' })
+
     var config = {
       headers: { 'Authorization': "bearer " + sessionId }
     };
     axios.get(`${Network.url}categories/`, config)
       .then((response) => {
-        if (response.data.children_data && response.data.children_data.length > 0)
-          this.setState({ categoryList: response.data.children_data });
-        else this.setState({defaultText:"No Data Found!!!"})  
+        if (response.data.children_data && response.data.children_data.length > 0) {
+          console.log('category list data', response.data.children_data);
+
+          this.setState({ categoryList: response.data.children_data, defaultText: "Pick your Interest", isFetching: false });
+        } else this.setState({ defaultText: "No Data Found!!!", isFetching: false });
       }).catch((error) => {
         Actions.showNotifier(this, 'categories error : ' + error, 1);
       });
