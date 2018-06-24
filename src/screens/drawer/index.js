@@ -59,8 +59,6 @@ class Drawer extends React.Component {
                     <FlatList
                         style={{ flex: 1 }}
                         data={this.state.subCategoryList}
-                        onRefresh={() => this.onRefresh()}
-                        refreshing={this.state.isFetching}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item, index }) => <DrawerTile reference={this} key={index} item={item} />}
                     />

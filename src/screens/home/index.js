@@ -201,6 +201,7 @@ class Home extends Component {
         } else this.setState({ defaultText: "No Data Found!!!", isFetching: false });
       }).catch((error) => {
         Actions.showNotifier(this, 'categories error : ' + error, 1);
+        this.setState({ isFetching: true, defaultText: ' ' });
       });
   }
 

@@ -1,6 +1,6 @@
 const Strings = {
     
-AppName:'SutraNetworks'
+AppName:'Example'
 };
 
 export default Strings;
