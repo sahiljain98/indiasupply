@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
-import { Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import { Text, View, Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import axios from 'axios';
 
 import Actions from '../../resources/actions';
 import Network from '../../library/network';
 import AppConfig from '../../resources/appconfig';
 import Colors from '../../resources/color';
+import Constants from '../../resources/constants';
+import DataRetriver from '../../library/dataRetriver';
 
 import NotFoundIcon from '../../resources/icons/notfound_image.png';
+
+import upArrow from '../../resources/icons/up-arrow.png';
+import downArrow from '../../resources/icons/down-arrow.png';
 
 import * as userActions from '../../reducer/action';
 import { bindActionCreators } from 'redux';
@@ -22,7 +27,11 @@ class ProductDetail extends Component {
             productId: this.props.propsData.sku,
             defaultText: 'Loading...',
             item: null,
-            layoutWidth: null
+            layoutWidth: null,
+            count: 0,
+            isDetailsVisible: false,
+            isMoreInformation: false,
+            isReview: false
         }
 
 
@@ -51,48 +60,65 @@ class ProductDetail extends Component {
         this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     }
     render() {
+        let { item, defaultText } = this.state;
         return (
-            <View style={{ flex: 1, backgroundColor: Colors.PrimaryColor }}
-                onLayout={(event) => { this.setState({ layoutWidth: event.nativeEvent.layout.width }) }}>
-                {/* layout content */}
-                <View style={{ flex: 1 }}>
+            item ?
+                <View style={{ flex: 1, backgroundColor: Colors.PrimaryColor }}
+                    onLayout={(event) => { this.setState({ layoutWidth: event.nativeEvent.layout.width }) }}>
 
-                    {/* image header */}
-                    <TouchableOpacity style={{ backgroundColor: 'white', alignItems: 'center', width: this.state.layoutWidth, height: this.state.layoutWidth * 0.5625, justifyContent: 'center' }}>
-                        <Image source={NotFoundIcon} style={{ width: 36, height: 36 }} />
-                    </TouchableOpacity>
-                    <Text>Product Name</Text>
+                    {/* layout content */}
+                    <ScrollView style={{ flex: 1 }}>
+
+                        {/* image header */}
+                        <TouchableOpacity
+                            onPress={() => {
+                                let list = [];
+                                list.push(Network.imageUrl + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_IMAGE))
+                                Actions.openComponentProps(this, 'ProductPreviewer', list)
+                            }}
+                            style={{ backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
+                            <Image
+                                source={{ uri: Network.imageUrl + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_IMAGE) }}
+                                style={{ width: '100%', height: this.state.layoutWidth * 0.5625, resizeMode: 'cover' }} />
+                        </TouchableOpacity>
+                        {/* product name */}
+                        <Text style={{ fontSize: 18, color: 'black', padding: 16, fontWeight: 'bold' }}>{item.name}</Text>
+
+                        {this.getCountView()}
+
+                        <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16, paddingVertical: 8 }}>{DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SHORT_DESCRIPTION)}</Text>
+
+                        <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16, paddingVertical: 8 }}>{DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_DENTAL_SIZE)}</Text>
+
+                        <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16 }}>Price</Text>
+                            <Text style={{ fontSize: 16, color: 'grey', textDecorationLine: 'line-through' }}>{'₹ ' + item.price}</Text>
+                            <Text style={{ fontSize: 18, color: Colors.AccentColor, paddingHorizontal: 16 }}>{'₹ ' + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE)}</Text>
+                        </View>
+
+                        <Text style={{ fontSize: 16, color: 'grey', paddingHorizontal: 16, paddingVertical: 8 }}>{'Buy two for ' + item.price * 2}</Text>
+
+                        <Text style={{ fontSize: 16, color: 'grey', paddingHorizontal: 16, paddingVertical: 8 }}>{'Buy five for ' + item.price * 5}</Text>
+
+                        {/* show details */}
+                        {this.getDetailView(item)}
+
+                    </ScrollView>
+
+                    {/* for bottom buttons */}
+                    {this.getBottomButtons()}
                 </View>
-
-
-                {this.getBottomButtons()}
-            </View>
+                : <View
+                    onLayout={(event) => { this.setState({ layoutWidth: event.nativeEvent.layout.width }) }}
+                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.PrimaryColor }}>
+                    <Text>{defaultText}</Text>
+                </View>
         );
     }
 
 
     componentDidMount() {
         this.getProductDetailById(this.state.productId)
-    }
-
-
-
-    /**
-     * get bottom buttons
-     */
-    getBottomButtons = () => {
-        return (<View style={{ flexDirection: 'row', elevation: 2 }}>
-            <TouchableOpacity
-                onPress={() => Actions.openComponentProps(this, 'Wishlist', null)}
-                style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginRight: 1, }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>WISHLIST</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => Actions.openComponentProps(this, 'Cart', null)}
-                style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
-                <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>ADD TO CART</Text>
-            </TouchableOpacity>
-        </View>);
     }
 
     /**
@@ -115,6 +141,122 @@ class ProductDetail extends Component {
             }).catch((error) => {
                 Actions.showNotifier(this, 'categories error : ' + error, 1);
             });
+    }
+
+
+    /**
+     * get details view
+     */
+    getReviewView = () => {
+        return (<View style={{ marginHorizontal: 16, marginVertical: 8 }}>
+            <TouchableOpacity
+                onPress={() => {
+                    let flag = !this.state.isReview;
+                    this.setState({ isReview: flag })
+                }}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: Colors.HighlightSecondaryColor }}>
+                <Text style={{ flex: 1, fontSize: 16, padding: 16, color: 'black' }}>
+                    Review
+                </Text>
+                <Image
+                    style={{ width: 16, height: 16, padding: 8, alignSelf: 'center', marginHorizontal: 12 }}
+                    source={this.state.isReview ? upArrow : downArrow} />
+            </TouchableOpacity>
+            {this.state.isReview ? <Text style={{ flex: 1, fontSize: 16, padding: 8, color: 'black', backgroundColor: '#f5f5f5' }}>dskjflkdsf </Text>
+                : <View />}
+        </View>);
+    }
+
+    /**
+     * get details view
+     */
+    getMoreInformationView = () => {
+        return (<View style={{ marginHorizontal: 16, marginVertical: 8 }}>
+            <TouchableOpacity
+                onPress={() => {
+                    let flag = !this.state.isMoreInformation;
+                    this.setState({ isMoreInformation: flag })
+                }}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: Colors.HighlightSecondaryColor }}>
+                <Text style={{ flex: 1, fontSize: 16, padding: 16, color: 'black' }}>
+                    More Information
+                </Text>
+                <Image
+                    style={{ width: 16, height: 16, padding: 8, alignSelf: 'center', marginHorizontal: 12 }}
+                    source={this.state.isMoreInformation ? upArrow : downArrow} />
+            </TouchableOpacity>
+            {this.state.isMoreInformation ? <Text style={{ flex: 1, fontSize: 16, padding: 8, color: 'black', backgroundColor: '#f5f5f5' }}>dskjflkdsf </Text>
+                : <View />}
+        </View>);
+    }
+
+    /**
+     * get details view
+     * @param {*} item data item
+     */
+    getDetailView = (item) => {
+        return (<View style={{ marginHorizontal: 16, marginVertical: 8 }}>
+            <TouchableOpacity
+                onPress={() => {
+                    let flag = !this.state.isDetailsVisible;
+                    this.setState({ isDetailsVisible: flag })
+                }}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: Colors.HighlightSecondaryColor }}>
+                <Text style={{ flex: 1, fontSize: 16, padding: 16, color: 'black' }}>
+                    Details
+                </Text>
+                <Image
+                    style={{ width: 16, height: 16, padding: 8, alignSelf: 'center', marginHorizontal: 12 }}
+                    source={this.state.isDetailsVisible ? upArrow : downArrow} />
+            </TouchableOpacity>
+            {this.state.isDetailsVisible ? <Text style={{
+                flex: 1, fontSize: 16, paddingVertical: 8, paddingHorizontal: 16, color: 'black', backgroundColor: '#f5f5f5'
+            }}>{DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_DESCRIPTION)}</Text>
+                : <View />}
+        </View>);
+    }
+
+    /**
+     * get count view
+     */
+    getCountView = () => {
+        let { count } = this.state;
+        return (<View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, paddingHorizontal: 16, color: 'black' }}>Bspc</Text>
+            <View style={{ flexDirection: 'row', marginEnd: 16 }}>
+                <TouchableOpacity onPress={() => {
+                    let val = this.state.count + 1;
+                    this.setState({ count: val })
+                }}>
+                    <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderColor: 'grey', borderWidth: 1 }}>+</Text>
+                </TouchableOpacity>
+                <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderColor: 'grey', borderWidth: 1 }}>{count}</Text>
+                <TouchableOpacity
+                    onPress={() => {
+                        let val = this.state.count - 1;
+                        this.setState({ count: val });
+                    }}>
+                    <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderColor: 'grey', borderWidth: 1 }}>-</Text>
+                </TouchableOpacity>
+            </View>
+        </View>);
+    }
+    /**
+     * get bottom buttons
+     */
+    getBottomButtons = () => {
+        return (<View style={{ flexDirection: 'row', elevation: 2 }}>
+            <TouchableOpacity
+                onPress={() => Actions.openComponentProps(this, 'Wishlist', null)}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginRight: 1, }}>
+                <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>WISHLIST</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => Actions.openComponentProps(this, 'Cart', null)}
+                style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
+                <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>ADD TO CART</Text>
+            </TouchableOpacity>
+        </View>);
     }
 
     /**

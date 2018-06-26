@@ -3,6 +3,9 @@ import { TouchableOpacity, Text, View, Image, TouchableHighlight } from 'react-n
 
 import Actions from '../../resources/actions';
 import Color from '../../resources/color';
+import DataRetriver from '../../library/dataRetriver';
+import Network from '../../library/network';
+import Constants from '../../resources/constants';
 
 import NotFoundIcon from '../../resources/icons/notfound_image.png';
 import HeartGreyIcon from '../../resources/icons/list_add.png';
@@ -30,19 +33,20 @@ export default class ProductListTile extends Component {
                     <View
                         style={{ flex: 1, flexDirection: 'row' }}>
 
-                        <View style={{ height: 56, width: 56, alignItems: 'center', justifyContent: 'center', margin: 16, backgroundColor: Color.HighlightPrimaryColor, borderRadius: 4 }}>
-                            <Image source={NotFoundIcon} style={{ width: 24, height: 24 }} />
+                        <View style={{ margin: 16 }}>
+                            <Image source={{ uri: Network.imageUrl + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SMALL_IMAGE) }} style={{ height: 56, width: 56, resizeMode: 'cover', borderRadius: 2 }} />
                         </View>
                         <View style={{ flex: 1, marginTop: 8 }}>
                             <Text style={{ fontSize: 16, paddingHorizontal: 8, paddingVertical: 4, color: 'black' }}>
                                 {item.name}
                             </Text>
-                            <Text style={{ fontSize: 12, paddingHorizontal: 8, color: 'grey' }}>
-                                {item.weight + " gm"}
+                            <Text style={{ fontSize: 14, paddingHorizontal: 8, color: 'grey' }}>
+                                {DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_DENTAL_SIZE)}
                             </Text>
-                            <Text style={{ fontSize: 14, paddingTop: 4, fontWeight: 'bold', paddingHorizontal: 8, color: 'black' }}>
-                                {"₹" + item.price}
-                            </Text>
+                            <View style={{ flexDirection: 'row', paddingVertical: 4, paddingHorizontal: 8, alignItems: 'center' }}>
+                                <Text style={{ fontSize: 14, color: 'grey', textDecorationLine: 'line-through' }}>{'₹ ' + item.price}</Text>
+                                <Text style={{ fontSize: 16, color: Color.AccentColor, paddingHorizontal: 8 }}>{'₹ ' + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE)}</Text>
+                            </View>
                         </View>
                         <TouchableOpacity onPress={() => {
                             let flag = !isWishlisted;

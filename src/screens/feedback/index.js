@@ -83,7 +83,7 @@ class Feedback extends Component {
         </View>
 
         <TouchableOpacity style={{ backgroundColor: Color.AccentColor, borderRadius: 4, margin: 16 }}>
-          <Text style={{ fontSize: 16, color: 'white', padding: 16, fontWeight: 'bold', textAlign: 'center' }}>Submit</Text>
+          <Text style={{ fontSize: 16, color: 'white', padding: 16, fontWeight: 'bold', textAlign: 'center' }}>Submit Your Feedback</Text>
         </TouchableOpacity>
 
 

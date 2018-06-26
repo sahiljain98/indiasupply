@@ -1,6 +1,10 @@
 const Constants = {
-    
-
+    PRODUCT_ITEM_ATTRIBUTE_CODE_DESCRIPTION: 'description',
+    PRODUCT_ITEM_ATTRIBUTE_CODE_SHORT_DESCRIPTION: 'short_description',
+    PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE: 'special_price',
+    PRODUCT_ITEM_ATTRIBUTE_CODE_IMAGE: 'image',
+    PRODUCT_ITEM_ATTRIBUTE_CODE_SMALL_IMAGE: 'small_image',
+    PRODUCT_ITEM_ATTRIBUTE_CODE_DENTAL_SIZE: 'dental_size'
 };
 
 export default Constants;

@@ -15,6 +15,7 @@ import Wishlist from './src/screens/wishlist';
 
 import ProductList from './src/screens/productlist';
 import ProductDetail from './src/screens/productdetail';
+import ProductPreviewer from './src/screens/photoPreviewer';
 
 // register all screens of the app (including internal ones)
 export function registerScreens(store, Provider) {
@@ -34,4 +35,6 @@ export function registerScreens(store, Provider) {
 
     Navigation.registerComponent('ProductList', () => ProductList, store, Provider);
     Navigation.registerComponent('ProductDetail', () => ProductDetail, store, Provider);
+    Navigation.registerComponent('ProductPreviewer', () => ProductPreviewer, store, Provider);
+
 }
