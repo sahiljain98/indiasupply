@@ -165,9 +165,25 @@ class Drawer extends React.Component {
                     this.setState({ categoryList: response.data.children_data, isFetching: false });
                 } else this.setState({ isFetching: false });
             }).catch((error) => {
-                Actions.showNotifier(this, 'categories error : ' + error, 1);
+                this.setState({ isFetching: false });
+                this.callAlert('Error in fetching categories : ' + error);
             });
     }
+      /**
+* calling alert with value title
+* @param {*} value title
+*/
+  callAlert = (value) => {
+    Alert.alert(
+      value,
+      "",
+      [
+        { text: 'OK', onPress: () => console.log('OK pressed') },
+      ],
+      { cancelable: false }
+    )
+  }
+
 }
 
 function mapStateToProps(state, ownProps) {

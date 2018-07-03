@@ -38,7 +38,7 @@ class Cart extends Component {
             </Text>
             <View style={{ flexDirection: 'row', marginBottom: 8, marginHorizontal: 12, alignItems: 'center' }}>
               <TextInput
-                placeholder="write here..."
+                placeholder="Enter code here..."
                 style={{ flex: 1, backgroundColor: 'white', fontSize: 16, color: 'black', borderRadius: 4, paddingVertical: 8, paddingHorizontal: 12, borderColor: Color.HighlightPrimaryColor, borderWidth: 1 }}
               />
               <TouchableOpacity style={{ marginStart: 12 }}>
@@ -70,7 +70,7 @@ class Cart extends Component {
 
         {/* bottom button */}
         <TouchableOpacity
-          onPress={() => Actions.openComponentProps(this, 'Cart', null)}
+          onPress={() => Actions.openComponentProps(this, 'Checkout', null)}
           style={{ justifyContent: 'center', padding: 16, backgroundColor: Color.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
           <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>Proceed to Checkout</Text>
         </TouchableOpacity>

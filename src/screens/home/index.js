@@ -200,8 +200,8 @@ class Home extends Component {
           this.setState({ categoryList: response.data.children_data, defaultText: "Pick your Interest", isFetching: false });
         } else this.setState({ defaultText: "No Data Found!!!", isFetching: false });
       }).catch((error) => {
-        Actions.showNotifier(this, 'categories error : ' + error, 1);
-        this.setState({ isFetching: true, defaultText: ' ' });
+        this.setState({ isFetching: false, defaultText: ' ' });
+        this.callAlert('Error in fetching catrgories : '+error);
       });
   }
 
