@@ -33,9 +33,34 @@ class Checkout extends Component {
     return (
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         {this.getHeader()}
-        {this.getContentView(currentView)}
+        <View style={{ flex: 1 }}>
+          {this.getContentView(currentView)}
+        </View>
+        <TouchableOpacity
+          onPress={() => this.updateStateWithValue(currentView)}
+          style={{ justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, margin: 16 }}>
+          <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>Continue</Text>
+        </TouchableOpacity>
       </View>
     );
+  }
+
+  updateStateWithValue = (value) => {
+    let updatedValue = this.updateNext(value);
+    this.setState({ currentView: updatedValue })
+  }
+
+  updateNext = (value) => {
+    switch (value) {
+      case CheckoutConstants.ADDRESS:
+        return CheckoutConstants.SHIPPING;
+      case CheckoutConstants.SHIPPING:
+        return CheckoutConstants.PAYMENT;
+      case CheckoutConstants.PAYMENT:
+        return CheckoutConstants.CONFIRMATION;
+      default:
+        return CheckoutConstants.ADDRESS;
+    }
   }
 
   /**

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {  Text, View, Image } from 'react-native';
+import { Text, View, Image } from 'react-native';
 
 import Actions from '../../../../resources/actions';
+import Colors from '../../../../resources/color';
 
 import * as userActions from '../../../../reducer/action';
 import { bindActionCreators } from 'redux';
@@ -14,8 +15,11 @@ class ConfirmationWidget extends Component {
   }
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <Text>confirmation</Text>
+      <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ height: 96, width: 96, backgroundColor: Colors.AccentColor, padding: 16, borderRadius: 360, justifyContent: 'center', alignItems: 'center' }}>
+          <Image style={{ width: 48, height: 48, resizeMode: 'cover' }} source={require('../../../../resources/icons/tick.png')} />
+        </View>
+        <Text style={{ color: 'black', fontSize: 16, padding: 16 }}>Your order has placed succesfully</Text>
       </View>
     );
   }

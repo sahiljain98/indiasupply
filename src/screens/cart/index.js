@@ -71,7 +71,7 @@ class Cart extends Component {
         {/* bottom button */}
         <TouchableOpacity
           onPress={() => Actions.openComponentProps(this, 'Checkout', null)}
-          style={{ justifyContent: 'center', padding: 16, backgroundColor: Color.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
+          style={{ justifyContent: 'center', padding: 16, backgroundColor: Color.AccentColor, elevation: 2, borderRadius: 2}}>
           <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>Proceed to Checkout</Text>
         </TouchableOpacity>
       </View>
