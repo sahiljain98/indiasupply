@@ -28,7 +28,7 @@ class ProductDetail extends Component {
             defaultText: 'Loading...',
             item: null,
             layoutWidth: null,
-            count: 0,
+            count: 1,
             isDetailsVisible: false,
             isMoreInformation: false,
             isReview: false
@@ -36,7 +36,7 @@ class ProductDetail extends Component {
 
 
         this.props.navigator.setTitle({
-            title: " "
+            title: ""
         });
 
         this.props.navigator.setButtons({
@@ -78,8 +78,10 @@ class ProductDetail extends Component {
                             }}
                             style={{ backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' }}>
                             <Image
+                                ref={'ImageDetailPic'}
                                 source={{ uri: Network.imageUrl + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_IMAGE) }}
-                                style={{ width: '100%', height: this.state.layoutWidth * 0.5625, resizeMode: 'cover' }} />
+                                style={{ width: '100%', height: this.state.layoutWidth * 0.5625, resizeMode: 'cover' }}
+                                onError={(e) => this.refs['ImageDetailPic'].setNativeProps({ src: [{ uri: 'http://www.asuntospublicos.org/upload/2017/12/26/21-table-decoration-ideas-for-a-summer-garden-party-garden-table-setting-l-fa89616578453aaf.jpg' }] })} />
                         </TouchableOpacity>
                         {/* product name */}
                         <Text style={{ fontSize: 18, color: 'black', padding: 16, fontWeight: 'bold' }}>{item.name}</Text>
@@ -90,11 +92,15 @@ class ProductDetail extends Component {
 
                         <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16, paddingVertical: 8 }}>{DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_DENTAL_SIZE)}</Text>
 
-                        <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center' }}>
-                            <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16 }}>Price</Text>
-                            <Text style={{ fontSize: 16, color: 'grey', textDecorationLine: 'line-through' }}>{'₹ ' + item.price}</Text>
-                            <Text style={{ fontSize: 18, color: Colors.AccentColor, paddingHorizontal: 16 }}>{'₹ ' + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE)}</Text>
-                        </View>
+                        {DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE) == null ?
+                            <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center' }}>
+                                <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16 }}>Price</Text>
+                                <Text style={{ fontSize: 16, color: Colors.AccentColor }}>{'₹ ' + item.price}</Text>
+                            </View> : <View style={{ flexDirection: 'row', paddingVertical: 8, alignItems: 'center' }}>
+                                <Text style={{ fontSize: 16, color: 'black', paddingHorizontal: 16 }}>Price</Text>
+                                <Text style={{ fontSize: 16, color: 'grey', textDecorationLine: 'line-through' }}>{'₹ ' + item.price}</Text>
+                                <Text style={{ fontSize: 18, color: Colors.AccentColor, paddingHorizontal: 16 }}>{'₹ ' + DataRetriver.getDataByParameter(item.custom_attributes, 'attribute_code', Constants.PRODUCT_ITEM_ATTRIBUTE_CODE_SPECIAL_PRICE)}</Text>
+                            </View>}
 
                         <Text style={{ fontSize: 16, color: 'grey', paddingHorizontal: 16, paddingVertical: 8 }}>{'Buy two for ' + item.price * 2}</Text>
 
@@ -106,7 +112,7 @@ class ProductDetail extends Component {
                     </ScrollView>
 
                     {/* for bottom buttons */}
-                    {this.getBottomButtons()}
+                    {this.getBottomButtons(item)}
                 </View>
                 : <View
                     onLayout={(event) => { this.setState({ layoutWidth: event.nativeEvent.layout.width }) }}
@@ -121,27 +127,6 @@ class ProductDetail extends Component {
         this.getProductDetailById(this.state.productId)
     }
 
-    /**
-     * api Hit
-     * get product detail by product id
-     * @param {*} productId productId
-     */
-    getProductDetailById = (productId) => {
-        let { sessionId } = this.state;
-        var config = {
-            headers: { 'Authorization': "bearer " + sessionId }
-        };
-        axios.get(`${Network.url}products/${productId}`, config)
-            .then((response) => {
-                if (response.data) {
-                    console.log('response', response);
-                    this.setState({ item: response.data });
-                }
-                else this.setState({ defaultText: "No Data Found!!!" })
-            }).catch((error) => {
-                Actions.showNotifier(this, 'categories error : ' + error, 1);
-            });
-    }
 
 
     /**
@@ -233,8 +218,10 @@ class ProductDetail extends Component {
                 <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderColor: 'grey', borderWidth: 1 }}>{count}</Text>
                 <TouchableOpacity
                     onPress={() => {
-                        let val = this.state.count - 1;
-                        this.setState({ count: val });
+                        if (this.state.count > 0) {
+                            let val = this.state.count - 1;
+                            this.setState({ count: val });
+                        }
                     }}>
                     <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderColor: 'grey', borderWidth: 1 }}>-</Text>
                 </TouchableOpacity>
@@ -243,8 +230,9 @@ class ProductDetail extends Component {
     }
     /**
      * get bottom buttons
+     * @param {*} item item
      */
-    getBottomButtons = () => {
+    getBottomButtons = (item) => {
         return (<View style={{ flexDirection: 'row', elevation: 2 }}>
             <TouchableOpacity
                 onPress={() => Actions.openComponentProps(this, 'Wishlist', null)}
@@ -252,12 +240,65 @@ class ProductDetail extends Component {
                 <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>WISHLIST</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => Actions.openComponentProps(this, 'Cart', null)}
+                onPress={() => this.addProductToCart(item.sku, this.state.count)}
                 style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>ADD TO CART</Text>
             </TouchableOpacity>
         </View>);
     }
+
+    /**
+   * api Hit
+   * get product detail by product id
+   * @param {*} productId productId
+   */
+    getProductDetailById = (productId) => {
+        let { sessionId } = this.state;
+        var config = {
+            headers: { 'Authorization': "bearer " + sessionId }
+        };
+        axios.get(`${Network.url}products/${productId}`, config)
+            .then((response) => {
+                if (response.data) {
+                    console.log('response', response);
+                    this.setState({ item: response.data });
+                }
+                else this.setState({ defaultText: "No Data Found!!!" })
+            }).catch((error) => {
+                Actions.showNotifier(this, 'categories error : ' + error, 1);
+            });
+    }
+
+    /**
+* api Hit
+* get product to cart
+* @param {*} sku sku
+* @param {*} qty quantity
+*/
+    addProductToCart = (sku, qty) => {
+        let { sessionId } = this.state;
+        var config = {
+            headers: { 'Authorization': "bearer " + sessionId }
+        };
+        var userParams = {
+            cartItem: {
+                sku: sku,
+                qty: qty,
+                quote_id: "1"
+            }
+        }
+        axios.post(`${Network.url}carts/mine/items`, userParams, config)
+            .then((response) => {
+                if (response.data) {
+                    console.log('add to cart : ', response);
+                    Actions.openComponentProps(this, 'Cart', null);
+                }
+            }).catch((error) => {
+                Actions.showNotifier(this, 'Error in Adding item to cart : ' + error, 1);
+            });
+    }
+
+
 
     /**
     * handling navigator event

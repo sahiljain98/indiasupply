@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, View, Image } from 'react-native';
+import { TouchableOpacity, Text, View, Image, FlatList } from 'react-native';
 
 import Actions from '../../resources/actions';
 import Color from '../../resources/color';
@@ -22,7 +22,7 @@ export default class CategoryTile extends Component {
   render() {
     let { item, isChildItemExist, isVisibleChildList, reference } = this.state;
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <TouchableOpacity
           onPress={() => {
             let flag = !isVisibleChildList;
@@ -39,16 +39,14 @@ export default class CategoryTile extends Component {
         </TouchableOpacity>
         {
           (isVisibleChildList && isChildItemExist) ?
-            item.children_data.map((item, index) => {
-              return (
-                <TouchableOpacity key={'item' + index}
-                  onPress={() => Actions.openModalProps(reference, "ProductList", { name: item.name, id: item.id })}
-                  style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: Color.HighlightPrimaryColor, marginVertical: 1, marginHorizontal: 12, borderRadius: 2 }}>
-                  <Text style={{ fontSize: 14, padding: 12, color: 'black' }}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>);
-            })
+
+            <FlatList
+              style={{ flex: 1, minHeight: 120 }}
+              data={item.children_data}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => <View style={{ marginHorizontal: 8, marginVertical: 1 }}><CategoryTile reference={this.props.reference} key={"tile" + index} item={item} /></View>}
+            />
+
             : <View />
         }
       </View>

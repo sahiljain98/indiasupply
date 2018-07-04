@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Text, View, Image } from 'react-native';
+import { TouchableOpacity, Text, View, Image, FlatList } from 'react-native';
 
 import Actions from '../../resources/actions';
 import Color from '../../resources/color';
@@ -7,7 +7,7 @@ import Color from '../../resources/color';
 import upArrow from '../../resources/icons/up-arrow.png';
 import downArrow from '../../resources/icons/down-arrow.png';
 
-export default class CategoryTile extends Component {
+export default class DrawerTile extends Component {
 
     constructor(props) {
         super(props);
@@ -39,16 +39,12 @@ export default class CategoryTile extends Component {
                 </TouchableOpacity>
                 {
                     (isVisibleChildList && isChildItemExist) ?
-                        item.children_data.map((item, index) => {
-                            return (
-                                <TouchableOpacity key={'item' + index}
-                                    onPress={() => Actions.openModalProps(reference, "ProductList", { name: item.name, id: item.id })}
-                                    style={{ flexDirection: 'row', backgroundColor: '#fbfbfb', justifyContent: 'space-between', marginVertical: 1, marginHorizontal: 4, borderRadius: 2 }}>
-                                    <Text style={{ fontSize: 14, padding: 12, color: 'black' }}>
-                                        {item.name}
-                                    </Text>
-                                </TouchableOpacity>);
-                        })
+                        <FlatList
+                            style={{ flex: 1, minHeight: 120 }}
+                            data={item.children_data}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item, index }) => <View style={{ marginHorizontal: 8, marginVertical: 1 }}><DrawerTile reference={this.props.reference} key={"drtile" + index} item={item} /></View>}
+                        />
                         : <View />
                 }
             </View>
