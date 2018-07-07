@@ -1,4 +1,5 @@
 import AppConfig from '../appconfig';
+import {Navigation} from 'react-native-navigation';
 
 /**
 * open component with respect to value
@@ -12,6 +13,21 @@ openComponentProps = (ref, value, props) => {
         screen: value,
         passProps: { propsData: props },
         navigatorStyle: AppConfig.NavbarConfig
+    })
+}
+
+/**
+* open component with respect to value
+* @param {*} value name of screen
+* @param {*} props props of screen
+* @param {*} ref reference
+*/
+resetComponentProps = (ref, value, props) => {
+    ref.props.navigator.resetTo({
+        title: value,
+        screen: value,
+        passProps: { propsData: props },
+        navigatorStyle: AppConfig.NavbarConfig,
     })
 }
 
@@ -68,9 +84,22 @@ showNotifier = (ref, text, transitionTime) => {
     });
 }
 
+/**
+ * dismiss all models
+ */
+dismissAllModels = () => {
+    Navigation.dismissAllModals({
+        animationType: 'slide-down' // 'none' / 'slide-down' , dismiss animation for the modal (optional, default 'slide-down')
+    });
+}
+
 
 module.exports = {
     openComponentProps: openComponentProps,
     openModalProps: openModalProps,
-    startToggleDrawer: startToggleDrawer
+    startToggleDrawer: startToggleDrawer,
+    endToggleDrawer: endToggleDrawer,
+    showNotifier: showNotifier,
+    resetComponentProps: resetComponentProps,
+    dismissAllModels: dismissAllModels
 }

@@ -11,7 +11,7 @@ import AsyncStore from '../../library/asyncStore';
 import CategoryTile from '../../components/categorytile';
 
 import dotGreyIcon from '../../resources/icons/dot_grey.png';
-import dotPinkIcon from '../../resources/icons/dot_pink.png';
+import dotPinkIcon from '../../resources/icons/dot_white.png';
 import upArrow from '../../resources/icons/up-arrow.png';
 import downArrow from '../../resources/icons/down-arrow.png';
 
@@ -31,12 +31,22 @@ class Home extends Component {
 
       categoryList: [],
       isFetching: false,
-      defaultText: ' '
+      defaultText: ' ',
+      isLogined: false
     }
 
     //initialize navigator event
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
 
+  }
+
+  componentWillMount() {
+
+    if (!this.state.isLogined) {
+      console.log('isLogined');
+      
+      Actions.openModalProps(this, 'Login', null);
+    }
   }
 
   render() {
@@ -54,7 +64,7 @@ class Home extends Component {
         </Text>
 
         <FlatList
-          style={{ flex: 1,minHeight:120 }}
+          style={{ flex: 1, minHeight: 120 }}
           data={this.state.categoryList}
           onRefresh={() => this.onRefresh()}
           refreshing={this.state.isFetching}
@@ -124,7 +134,7 @@ class Home extends Component {
     try {
       AsyncStorage.getItem(AsyncStore.Constants.SESSION_ID)
         .then((sessionId) => {
-          console.log("session id is ",sessionId);
+          console.log("session id is ", sessionId);
 
           if (sessionId == null) {
             this.getSessionByCredentials('priti', 'admin123');
@@ -201,7 +211,7 @@ class Home extends Component {
         } else this.setState({ defaultText: "No Data Found!!!", isFetching: false });
       }).catch((error) => {
         this.setState({ isFetching: false, defaultText: ' ' });
-        this.callAlert('Error in fetching catrgories : '+error);
+        this.callAlert('Error in fetching catrgories : ' + error);
       });
   }
 

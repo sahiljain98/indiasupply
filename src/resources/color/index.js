@@ -1,6 +1,6 @@
 const Color = {
 
-    AccentColor: '#dd1853',
+    AccentColor: '#1082BC',
     AccentSecondoryColor: '#34b572',
     PrimaryColor: '#fbfbfb',
     PrimaryTextColor: '#434343',
