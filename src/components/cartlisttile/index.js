@@ -14,37 +14,41 @@ export default class CartListTile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            item: this.props.item
         }
     }
 
     render() {
+        let { item } = this.state;
         return (
             <View
-                style={{ flex: 1, flexDirection: 'row', backgroundColor: 'white', elevation: 1, marginVertical: 4, borderRadius: 2, paddingBottom: 12,marginHorizontal:2 }}>
+                style={{ flex: 1, flexDirection: 'row', backgroundColor: 'white', elevation: 1, marginVertical: 4, borderRadius: 2, paddingBottom: 12, marginHorizontal: 2 }}>
 
-                <View style={{ marginVertical: 16,marginStart:16,marginEnd:8 }}>
-                    <Image source={{uri:'https://www.planwallpaper.com/static/images/Downlaod-Michael-Jackson-Wallpaper-HD.jpg'}} style={{ height: 56, width: 56, resizeMode: 'cover', borderRadius: 2 }} />
-                </View>
-                <View style={{ flex: 1, marginTop: 8 }}>
-                    <Text style={{ fontSize: 16, paddingHorizontal: 8, paddingVertical: 4, color: 'black' }}>
-                        name
+                <View style={{flexDirection: 'row',flex:1}}>
+                    <View style={{ marginVertical: 16, marginStart: 16, marginEnd: 8 }}>
+                        <Image source={{ uri: 'https://www.planwallpaper.com/static/images/Downlaod-Michael-Jackson-Wallpaper-HD.jpg' }} style={{ height: 56, width: 56, resizeMode: 'cover', borderRadius: 2 }} />
+                    </View>
+                    <View style={{ flex: 1, marginTop: 8 }}>
+                        <Text style={{ fontSize: 16, paddingHorizontal: 8, paddingVertical: 4, color: 'black' }}>
+                            {item.name}
                         </Text>
-                    <Text style={{ fontSize: 14, paddingHorizontal: 8, color: 'grey' }}>
+                        {/* <Text style={{ fontSize: 14, paddingHorizontal: 8, color: 'grey' }}>
                         hey
-                        </Text>
-                    <View style={{ flexDirection: 'row', paddingVertical: 4, paddingHorizontal: 8 }}>
-                        <Text style={{ fontSize: 16, color: Color.AccentColor,}}>{'₹ price'}</Text>
+                        </Text> */}
+                        <View style={{ flexDirection: 'row', paddingVertical: 4, paddingHorizontal: 8 }}>
+                            <Text style={{ fontSize: 16, color: Color.AccentColor, }}>{'₹ ' + item.price}</Text>
 
+                        </View>
                     </View>
                 </View>
                 <View
-                    style={{ justifyContent: 'space-between', marginEnd: 12,marginTop:12, marginStart: 4 }}>
-                    <TouchableOpacity >
+                    style={{ justifyContent: 'space-between', marginEnd: 8, marginTop: 12 }}>
+                    <TouchableOpacity style={{alignItems:'flex-end'}} >
                         <Image source={CloseIcon} style={{ width: 16, height: 16 }} />
                     </TouchableOpacity>
                     <Text
-                        style={{ borderColor: 'grey', borderWidth: 1, color: 'grey', fontSize: 14, paddingVertical: 2, paddingHorizontal: 4, borderRadius: 4 ,textAlign:'center'}}>
-                        1
+                        style={{ borderColor: 'grey', borderWidth: 1, color: 'grey', fontSize: 14, paddingVertical: 2, paddingHorizontal: 4, borderRadius: 4, textAlign: 'center' }}>
+                        {item.qty}
                     </Text>
                 </View>
             </View>

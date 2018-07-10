@@ -2,7 +2,8 @@
 import * as type from '../reducerConstants';
 
 const initialUserState = {
-    sessionId: ''
+    sessionId: '',
+    userToken: ''
 }
 
 
@@ -13,6 +14,11 @@ const service = (state = initialUserState, action) => {
             return {
                 ...state,
                 sessionId: action.sessionId
+            }
+        case type.USER_TOKEN:
+            return {
+                ...state,
+                userToken: action.userToken
             }
         default:
             return state;

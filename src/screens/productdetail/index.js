@@ -24,6 +24,7 @@ class ProductDetail extends Component {
         super(props);
         this.state = {
             sessionId: this.props.service.sessionId,
+            userToken: this.props.service.userToken,
             productId: this.props.propsData.sku,
             defaultText: 'Loading...',
             item: null,
@@ -240,7 +241,7 @@ class ProductDetail extends Component {
                 <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>WISHLIST</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => this.addProductToCart(item.sku, this.state.count)}
+                onPress={() => this.getCartIdByCustomerToken(item.sku, this.state.count)}
                 style={{ flex: 1, flexDirection: 'row', justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, marginLeft: 1 }}>
                 <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>ADD TO CART</Text>
             </TouchableOpacity>
@@ -268,6 +269,33 @@ class ProductDetail extends Component {
                 Actions.showNotifier(this, 'categories error : ' + error, 1);
             });
     }
+
+
+    /**
+  * API Hit
+  * get cart id by customer token
+  */
+    getCartIdByCustomerToken = async (sku, qty) => {
+
+        let { userToken } = this.state;
+        console.log('userToken : ', userToken);
+
+        var config = {
+            headers: { 'Authorization': "bearer " + userToken }
+        };
+        axios.post(`${Network.url}carts/mine`, {}, config)
+            .then((response) => {
+                console.log('cartId generator : ', response);
+
+                if (response.data) {
+                    this.addProductToCart(sku, qty, response.data);
+                } else Actions.showNotifier(this, "Failed to generate card Id", null);
+            }).catch((error) => {
+                console.log('Failed to generate cart id');
+            });
+
+    }
+
 
     /**
 * api Hit

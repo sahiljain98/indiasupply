@@ -5,7 +5,8 @@ import { AsyncStorage } from 'react-native';
 
 const Constants = {
     SESSION_ID: 'sessionId',
-    USER_TOKEN: 'user_token'
+    USER_TOKEN: 'user_token',
+    CUSTOMER_ID: 'customer_id'
 };
 
 /**

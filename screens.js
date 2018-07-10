@@ -45,4 +45,5 @@ export function registerScreens(store, Provider) {
     Navigation.registerComponent('ProductDetail', () => ProductDetail, store, Provider);
     Navigation.registerComponent('ProductPreviewer', () => ProductPreviewer, store, Provider);
 
+    callbackFunction();
 }

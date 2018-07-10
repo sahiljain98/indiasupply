@@ -7,6 +7,7 @@ import Actions from '../../resources/actions';
 import Color from '../../resources/color';
 import Network from '../../library/network';
 import AsyncStore from '../../library/asyncStore';
+import Strings from '../../resources/strings';
 
 import CategoryTile from '../../components/categorytile';
 
@@ -40,15 +41,6 @@ class Home extends Component {
 
   }
 
-  componentWillMount() {
-
-    if (!this.state.isLogined) {
-      console.log('isLogined');
-      
-      Actions.openModalProps(this, 'Login', null);
-    }
-  }
-
   render() {
 
     return (
@@ -77,7 +69,12 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    //generate session id
     this.getSession();
+
+    //get customer token
+    this.getCustomerToken();
+
   }
 
   /**
@@ -137,14 +134,38 @@ class Home extends Component {
           console.log("session id is ", sessionId);
 
           if (sessionId == null) {
-            this.getSessionByCredentials('priti', 'admin123');
+            this.getSessionByCredentials(Strings.AdminName, Strings.AdminPassword);
           } else {
             //hit api
             this.getCategoryList(sessionId);
 
             //put session id in redux
             let { action } = this.props;
-            action.sessionId(sessionId)
+            action.sessionId(sessionId);
+
+          }
+        });
+    } catch (e) {
+      this.callAlert('Error!!!', e);
+      console.log('Error in session');
+    }
+
+  }
+
+
+  getCustomerToken = async () => {
+
+    try {
+      AsyncStorage.getItem(AsyncStore.Constants.USER_TOKEN)
+        .then((userToken) => {
+          console.log("user token is ", userToken);
+
+          if (userToken == null) {
+            this.resetBackToLogin();
+          } else {
+            //put usre token id in redux
+            let { action } = this.props;
+            action.userToken(userToken);
           }
         });
     } catch (e) {
@@ -214,6 +235,23 @@ class Home extends Component {
         this.callAlert('Error in fetching catrgories : ' + error);
       });
   }
+
+
+  resetBackToLogin = () => {
+    try {
+      //remove item from asyncstore
+      AsyncStorage.removeItem(AsyncStore.Constants.USER_TOKEN);
+      AsyncStorage.removeItem(AsyncStore.Constants.SESSION_ID);
+      AsyncStorage.removeItem(AsyncStore.Constants.CUSTOMER_ID);
+
+      //open login screen
+      Actions.startLoginScreen();
+    } catch (e) {
+      console.log(e);
+    }
+
+  }
+
 
   /**
   * handling navigator event

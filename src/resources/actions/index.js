@@ -1,5 +1,11 @@
 import AppConfig from '../appconfig';
-import {Navigation} from 'react-native-navigation';
+import { Navigation } from 'react-native-navigation';
+
+import HomeIcon from '../icons/home.png';
+import FeedbackIcon from '../icons/feedback.png';
+import AccountIcon from '../icons/account.png';
+import FavouriteIcon from '../icons/favorite.png';
+import MoreIcon from '../icons/more.png';
 
 /**
 * open component with respect to value
@@ -93,6 +99,84 @@ dismissAllModels = () => {
     });
 }
 
+/**
+ * start main screen
+ */
+startMainScreen = () => {
+    Navigation.startTabBasedApp({
+        tabs: [
+            {
+                // label:'Home',
+                title: AppConfig.AppName,
+                screen: 'Home',
+                icon: HomeIcon,
+                navigatorStyle: AppConfig.NavbarConfig,
+                navigatorButtons: AppConfig.NavbarButtonConfig
+
+            },
+            {
+                title: AppConfig.AppName,
+                screen: 'Feedback', // unique ID registered with Navigation.registerScreen
+                icon: FeedbackIcon, // local image asset for the tab icon unselected state (optional on iOS)
+                navigatorStyle: AppConfig.NavbarConfig,
+                navigatorButtons: AppConfig.NavbarButtonConfig
+
+            },
+            {
+                // label:'Home',
+                title: AppConfig.AppName,
+                screen: 'Account',
+                icon: AccountIcon,
+                navigatorStyle: AppConfig.NavbarConfig,
+                navigatorButtons: AppConfig.NavbarButtonConfig
+
+            },
+            {
+                // label:'Home',
+                title: AppConfig.AppName,
+                screen: 'Favourite',
+                icon: FavouriteIcon,
+                navigatorStyle: AppConfig.NavbarConfig,
+                navigatorButtons: AppConfig.NavbarButtonConfig
+
+            },
+            {
+                // label:'Home',
+                title: AppConfig.AppName,
+                screen: 'More',
+                icon: MoreIcon,
+                navigatorStyle: AppConfig.NavbarConfig,
+                navigatorButtons: AppConfig.NavbarButtonConfig
+
+            }
+
+        ],
+
+        appStyle: AppConfig.TabbarConfig, //for andoid
+        tabsStyle: AppConfig.TabbarConfig, //for ios
+
+        drawer: { // optional, add this if you want a side menu drawer in your app
+            left: { // optional, define if you want a drawer from the left
+                screen: 'Drawer', // unique ID registered with Navigation.registerScreen
+                passProps: {}, // simple serializable object that will pass as props to all top screens (optional),
+            }
+        }
+    });
+}
+
+/**
+ * start login screen
+ */
+startLoginScreen = () => {
+    Navigation.startSingleScreenApp({
+        screen: {
+            screen: 'Login', // unique ID registered with Navigation.registerScreen
+        },
+        passProps: {}, // simple serializable object that will pass as props to all top screens (optional)
+        animationType: 'slide-down' // optional, add transition animation to root change: 'none', 'slide-down', 'fade'
+    });
+}
+
 
 module.exports = {
     openComponentProps: openComponentProps,
@@ -101,5 +185,7 @@ module.exports = {
     endToggleDrawer: endToggleDrawer,
     showNotifier: showNotifier,
     resetComponentProps: resetComponentProps,
-    dismissAllModels: dismissAllModels
+    dismissAllModels: dismissAllModels,
+    startMainScreen: startMainScreen,
+    startLoginScreen: startLoginScreen
 }

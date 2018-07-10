@@ -23,6 +23,7 @@ class ProductListTile extends Component {
         super(props);
         this.state = {
             sessionId: this.props.service.sessionId,
+            userToken: this.props.service.userToken,
             item: this.props.item,
             reference: this.props.reference,
             isWishlisted: false,
@@ -71,7 +72,7 @@ class ProductListTile extends Component {
                     </View>
                     {isAddCartVisible ?
                         <View style={{ alignItems: 'flex-end' }}>
-                            <TouchableOpacity onPress={() => this.addProductToCart(item.sku, 1)}>
+                            <TouchableOpacity onPress={() => this.getCartIdByCustomerToken(item.sku, 1)}>
                                 <Text
                                     style={{ backgroundColor: Color.AccentColor, color: 'white', fontSize: 14, paddingVertical: 4, paddingHorizontal: 8, borderRadius: 2, marginBottom: 12, marginHorizontal: 12 }}>
                                     Add to Cart
@@ -83,22 +84,49 @@ class ProductListTile extends Component {
         );
     }
 
+
+    /**
+  * API Hit
+  * get cart id by customer token
+  */
+    getCartIdByCustomerToken = async (sku, qty) => {
+
+        let { userToken } = this.state;
+        console.log('userToken : ', userToken);
+
+        var config = {
+            headers: { 'Authorization': "bearer " + userToken }
+        };
+        axios.post(`${Network.url}carts/mine`, {}, config)
+            .then((response) => {
+                console.log('cartId generator : ', response);
+
+                if (response.data) {
+                    this.addProductToCart(sku, qty, response.data);
+                } else Actions.showNotifier(this, "Failed to generate card Id", null);
+            }).catch((error) => {
+                console.log('Failed to generate cart id');
+            });
+
+    }
+
+
     /**
     * api Hit
     * get product to cart
     * @param {*} sku sku
     * @param {*} qty quantity
     */
-    addProductToCart = (sku, qty) => {
-        let { sessionId } = this.state;
+    addProductToCart = (sku, qty, quoteId) => {
+        let { userToken } = this.state;
         var config = {
-            headers: { 'Authorization': "bearer " + sessionId }
+            headers: { 'Authorization': "bearer " + userToken }
         };
         var userParams = {
             cartItem: {
                 sku: sku,
                 qty: qty,
-                quote_id: "1"
+                quote_id: quoteId
             }
         }
         axios.post(`${Network.url}carts/mine/items`, userParams, config)

@@ -14,6 +14,7 @@ import TextInputLayout from '../../library/textinputlayout';
 import * as userActions from '../../reducer/action';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Strings from '../../resources/strings';
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -61,7 +62,7 @@ class Login extends Component {
                 </View>
 
                 <TouchableOpacity
-                    onPress={() => Actions.openModalProps(this, "Register", null)}
+                    onPress={() => Actions.openComponentProps(this, "Register", null)}
                     style={{ margin: 24, flexDirection: 'row', justifyContent: 'center', padding: 16 }}>
                     <Text style={{ fontSize: 14 }}>Not Registered?</Text>
                     <Text style={{ fontSize: 16, color: Colors.AccentColor }}>   Register Now</Text>
@@ -70,6 +71,76 @@ class Login extends Component {
             </View>
         );
     }
+
+    componentDidMount() {
+        //get session
+        this.getSession();
+    }
+
+
+
+    /**
+     * get session id from local else hit api
+     */
+    getSession = async () => {
+        try {
+            AsyncStorage.getItem(AsyncStore.Constants.SESSION_ID)
+                .then((sessionId) => {
+                    console.log("session id is ", sessionId);
+
+                    if (sessionId == null) {
+                        this.getSessionByCredentials(Strings.AdminName, Strings.AdminPassword);
+                    } else {
+
+                        this.setState({ sessionId: sessionId });
+
+                        //put session id in redux
+                        let { action } = this.props;
+                        action.sessionId(sessionId);
+                    }
+                });
+        } catch (e) {
+            console.log('Error in session');
+        }
+
+    }
+
+
+    /**
+     * api hit
+     * get session
+     * @param {*} username user name
+     * @param {*} password password
+     */
+    getSessionByCredentials = async (username, password) => {
+        var userParms = {
+            "username": username,
+            "password": password
+        }
+        axios.post(`${Network.url}integration/admin/token`, userParms)
+            .then((response) => {
+                console.log('session token', response.data);
+
+                //put data into async store
+                try {
+                    AsyncStorage.setItem(AsyncStore.Constants.SESSION_ID, response.data);
+                } catch (e) {
+                    console.log('error in saving data', e);
+                }
+
+                //setting session id
+                this.setState({ sessionId: response.data });
+
+                //put session id in redux
+                let { action } = this.props;
+                action.sessionId(response.data);
+            })
+            .catch((error) => {
+                console.log("Session Id not generated");
+            });
+
+    }
+
 
 
 
@@ -115,11 +186,16 @@ class Login extends Component {
         axios.post(`${Network.url}integration/customer/token`, userParams, config)
             .then((response) => {
                 if (response.data) {
-                    Actions.dismissAllModels();
                     Actions.showNotifier(this, "Logined", 1);
+                    Actions.startMainScreen();
                     //put data into async store
                     try {
+
                         AsyncStorage.setItem(AsyncStore.Constants.USER_TOKEN, response.data);
+
+                        //put usre token id in redux
+                        let { action } = this.props;
+                        action.userToken(response.data)
                     } catch (e) {
                         console.log('error in saving user token', e);
                     }
@@ -128,6 +204,8 @@ class Login extends Component {
                 Actions.showNotifier(this, 'Failed ' + error, 1);
             });
     }
+
+
 
 }
 
@@ -139,7 +217,7 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(userActions, dispatch)
+        action: bindActionCreators(userActions, dispatch)
     };
 }
 

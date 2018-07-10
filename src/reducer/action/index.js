@@ -8,3 +8,9 @@ export const sessionId = (sessionId) => {
     }
 }
 
+export const userToken = (userToken) => {
+    return {
+        type: type.USER_TOKEN,
+        userToken
+    }
+}
