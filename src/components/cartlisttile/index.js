@@ -24,9 +24,12 @@ export default class CartListTile extends Component {
             <View
                 style={{ flex: 1, flexDirection: 'row', backgroundColor: 'white', elevation: 1, marginVertical: 4, borderRadius: 2, paddingBottom: 12, marginHorizontal: 2 }}>
 
-                <View style={{flexDirection: 'row',flex:1}}>
+                <View style={{ flexDirection: 'row', flex: 1 }}>
                     <View style={{ marginVertical: 16, marginStart: 16, marginEnd: 8 }}>
-                        <Image source={{ uri: 'https://www.planwallpaper.com/static/images/Downlaod-Michael-Jackson-Wallpaper-HD.jpg' }} style={{ height: 56, width: 56, resizeMode: 'cover', borderRadius: 2 }} />
+                        <Image
+                            source={{ uri: 'http://www.asuntospublicos.org/upload/2017/12/26/21-table-decoration-ideas-for-a-summer-garden-party-garden-table-setting-l-fa89616578453aaf.jpg' }}
+                            style={{ height: 56, width: 56, resizeMode: 'cover', borderRadius: 2 }}
+                        />
                     </View>
                     <View style={{ flex: 1, marginTop: 8 }}>
                         <Text style={{ fontSize: 16, paddingHorizontal: 8, paddingVertical: 4, color: 'black' }}>
@@ -43,7 +46,7 @@ export default class CartListTile extends Component {
                 </View>
                 <View
                     style={{ justifyContent: 'space-between', marginEnd: 8, marginTop: 12 }}>
-                    <TouchableOpacity style={{alignItems:'flex-end'}} >
+                    <TouchableOpacity style={{ alignItems: 'flex-end' }} >
                         <Image source={CloseIcon} style={{ width: 16, height: 16 }} />
                     </TouchableOpacity>
                     <Text

@@ -36,31 +36,8 @@ class Checkout extends Component {
         <View style={{ flex: 1 }}>
           {this.getContentView(currentView)}
         </View>
-        <TouchableOpacity
-          onPress={() => this.updateStateWithValue(currentView)}
-          style={{ justifyContent: 'center', padding: 16, backgroundColor: Colors.AccentColor, elevation: 2, borderRadius: 2, margin: 16 }}>
-          <Text style={{ textAlign: 'center', fontSize: 16, marginHorizontal: 16, color: 'white' }}>Continue</Text>
-        </TouchableOpacity>
       </View>
     );
-  }
-
-  updateStateWithValue = (value) => {
-    let updatedValue = this.updateNext(value);
-    this.setState({ currentView: updatedValue })
-  }
-
-  updateNext = (value) => {
-    switch (value) {
-      case CheckoutConstants.ADDRESS:
-        return CheckoutConstants.SHIPPING;
-      case CheckoutConstants.SHIPPING:
-        return CheckoutConstants.PAYMENT;
-      case CheckoutConstants.PAYMENT:
-        return CheckoutConstants.CONFIRMATION;
-      default:
-        return CheckoutConstants.ADDRESS;
-    }
   }
 
   /**
@@ -89,14 +66,15 @@ class Checkout extends Component {
     let { currentView } = this.state;
     return (
       <View style={{ alignSelf: 'center' }}>
-        <TouchableOpacity
+        <View
           style={{ alignItems: 'center' }}
-          onPress={() => { this.setState({ currentView: state }) }}>
+        // onPress={() => { this.setState({ currentView: state }) }}
+        >
           <View style={{ height: 48, width: 48, borderRadius: 360, justifyContent: 'center', backgroundColor: (currentView === state) ? Colors.AccentColor : 'grey' }}>
             <Image style={{ height: 24, width: 24, alignSelf: 'center', resizeMode: 'cover' }} source={icon} />
           </View>
           <Text style={{ fontSize: 16, padding: 6, textAlign: 'center', color: (currentView === state) ? Colors.AccentColor : 'grey' }}>{name}</Text>
-        </TouchableOpacity>
+        </View>
       </View>);
   }
 
@@ -107,7 +85,7 @@ class Checkout extends Component {
   getContentView = (value) => {
     switch (value) {
       case CheckoutConstants.ADDRESS:
-        return (<AddressWidget />);
+        return (<AddressWidget updateStateWithValue={this.updateStateWithValue.bind(this)} currentView={this.state.currentView} reference={this} />);
       case CheckoutConstants.SHIPPING:
         return (<ShippingWidget />);
       case CheckoutConstants.PAYMENT:
@@ -119,6 +97,31 @@ class Checkout extends Component {
     }
   }
 
+  /**
+   * update state with given value and update state
+   * @param {*}value visible state
+   */
+  updateStateWithValue = (value) => {
+    let updatedValue = this.updateNext(value);
+    this.setState({ currentView: updatedValue })
+  }
+
+  /**
+   * return to next state
+   * @param {*} value active visible state
+   */
+  updateNext = (value) => {
+    switch (value) {
+      case CheckoutConstants.ADDRESS:
+        return CheckoutConstants.SHIPPING;
+      case CheckoutConstants.SHIPPING:
+        return CheckoutConstants.PAYMENT;
+      case CheckoutConstants.PAYMENT:
+        return CheckoutConstants.CONFIRMATION;
+      default:
+        return CheckoutConstants.ADDRESS;
+    }
+  }
 
 }
 function mapStateToProps(state, ownProps) {
