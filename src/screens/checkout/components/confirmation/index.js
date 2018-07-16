@@ -20,6 +20,8 @@ class ConfirmationWidget extends Component {
           <Image style={{ width: 48, height: 48, resizeMode: 'cover' }} source={require('../../../../resources/icons/tick.png')} />
         </View>
         <Text style={{ color: 'black', fontSize: 16, padding: 16 }}>Your order has placed succesfully</Text>
+        <Text style={{ color: 'black', fontSize: 16, padding: 16 }}>{'Order id : ' + this.props.orderId}</Text>
+
       </View>
     );
   }

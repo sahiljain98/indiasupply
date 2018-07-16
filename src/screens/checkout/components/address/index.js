@@ -20,15 +20,17 @@ class AddressWidget extends Component {
     super(props);
     this.state = {
       userToken: this.props.service.userToken,
-      firstName: null,
-      lastName: null,
-      email: null,
-      phone: null,
-      street: null,
-      city: null,
-      state: null,
-      country: null,
-      postcode: null
+      address: {
+        firstName: null,
+        lastName: null,
+        email: null,
+        phone: null,
+        street: null,
+        city: null,
+        state: null,
+        country: null,
+        postcode: null
+      }
     }
   }
   render() {
@@ -39,14 +41,30 @@ class AddressWidget extends Component {
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'First Name'}
-              onChangeText={name => this.setState({ firstName: name })}
+              onChangeText={name => {
+                let address = this.state.address;
+                address.firstName = name;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'Last Name'}
-              onChangeText={name => this.setState({ lastName: name })}
+              onChangeText={name => {
+                let address = this.state.address;
+                address.lastName = name;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}
@@ -55,7 +73,15 @@ class AddressWidget extends Component {
               style={{ fontSize: 16, height: 40 }}
               placeholder={'Email Address'}
               keyboardType={'email-address'}
-              onChangeText={email => this.setState({ email: email })}
+              onChangeText={email => {
+                let address = this.state.address;
+                address.email = email;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
@@ -63,42 +89,90 @@ class AddressWidget extends Component {
               style={{ fontSize: 16, height: 40 }}
               placeholder={'Phone'}
               keyboardType={'phone-pad'}
-              onChangeText={phone => this.setState({ phone: phone })}
+              onChangeText={phone => {
+                let address = this.state.address;
+                address.phone = phone;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'Street'}
-              onChangeText={addr => this.setState({ street: addr })}
+              onChangeText={addr => {
+                let address = this.state.address;
+                address.street = addr;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'City'}
-              onChangeText={city => this.setState({ city: city })}
+              onChangeText={city => {
+                let address = this.state.address;
+                address.city = city;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'State'}
-              onChangeText={value => this.setState({ state: value })}
+              onChangeText={value => {
+                let address = this.state.address;
+                address.state = value;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
-              placeholder={'Country'}
-              onChangeText={country => this.setState({ country: country })}
+              placeholder={'Country ID (example: IN,US)'}
+              onChangeText={country => {
+                let address = this.state.address;
+                address.country = country;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
           <TextInputLayout style={{ marginTop: 16, marginHorizontal: 16 }}>
             <TextInput
               style={{ fontSize: 16, height: 40 }}
               placeholder={'Post Code'}
-              onChangeText={code => this.setState({ postcode: code })}
+              onChangeText={code => {
+                let address = this.state.address;
+                address.postcode = code;
+
+                // update state
+                this.setState({
+                  address,
+                });
+              }}
             />
           </TextInputLayout>
 
@@ -126,15 +200,15 @@ class AddressWidget extends Component {
    * validate shipping address
    */
   validateShippingAddress = () => {
-    let { userToken, firstName, lastName, email, phone, street, city, state, country, postcode } = this.state;
-    return (firstName ?
-      (lastName ?
-        (email ?
-          (phone ?
-            (street ?
-              (city ?
-                (country ?
-                  (postcode ? true : false) :
+    let { userToken, address } = this.state;
+    return (address.firstName ?
+      (address.lastName ?
+        (address.email ?
+          (address.phone ?
+            (address.street ?
+              (address.city ?
+                (address.country ?
+                  (address.postcode ? true : false) :
                   false) :
                 false) :
               false) :
@@ -150,21 +224,21 @@ class AddressWidget extends Component {
  */
   estimateShippingAddress = async () => {
 
-    let { userToken, firstName, lastName, email, phone, street, city, state, country, postcode } = this.state;
+    let { userToken, address } = this.state;
 
     var userParms = {
       "address": {
-        "region": state,
-        "country_id": country,
+        "region": address.state,
+        "country_id": address.country,
         "street": [
-          street
+          address.street
         ],
-        "postcode": postcode,
-        "city": city,
-        "firstname": firstName,
-        "lastname": lastName,
-        "email": email,
-        "telephone": phone,
+        "postcode": address.postcode,
+        "city": address.city,
+        "firstname": address.firstName,
+        "lastname": address.lastName,
+        "email": address.email,
+        "telephone": address.phone,
         "same_as_billing": 1
       }
     };
@@ -174,9 +248,13 @@ class AddressWidget extends Component {
     };
     axios.post(`${Network.url}carts/mine/estimate-shipping-methods`, userParms, config)
       .then((response) => {
-        if (response.data) {
-          console.log('shipping addr', response.data);
-          this.props.updateStateWithValue(this.props.currentView)
+        console.log('shipping addr', response.data);
+
+        if (response.data && response.data.length > 0) {
+          //update shipping value
+          this.props.updateShippingMode(response.data[0].carrier_code, response.data[0].method_code, address);
+          //update state to shipping
+          this.props.updateStateWithValue(this.props.currentView);
         } else Actions.showNotifier(this.props.reference, "Fail to continue!!!", 1);
       }).catch((error) => {
         console.log(error);

@@ -24,7 +24,12 @@ class Checkout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentView: CheckoutConstants.ADDRESS
+      currentView: CheckoutConstants.ADDRESS,
+      carrier_code: null,
+      method_code: null,
+      address: null,
+      payment_methods: [],
+      orderId: null
     };
   }
 
@@ -85,13 +90,30 @@ class Checkout extends Component {
   getContentView = (value) => {
     switch (value) {
       case CheckoutConstants.ADDRESS:
-        return (<AddressWidget updateStateWithValue={this.updateStateWithValue.bind(this)} currentView={this.state.currentView} reference={this} />);
+        return (<AddressWidget
+          reference={this}
+          updateStateWithValue={this.updateStateWithValue.bind(this)}
+          currentView={this.state.currentView}
+          updateShippingMode={this.updateShippingMode.bind(this)} />);
       case CheckoutConstants.SHIPPING:
-        return (<ShippingWidget />);
+        return (<ShippingWidget
+          reference={this}
+          address={this.state.address}
+          carrier_code={this.state.carrier_code}
+          method_code={this.state.method_code}
+          currentView={this.state.currentView}
+          updateStateWithValue={this.updateStateWithValue.bind(this)}
+          updatePayementMethods={this.updatePayementMethods.bind(this)} />);
       case CheckoutConstants.PAYMENT:
-        return (<PaymentWidget />);
+        return (<PaymentWidget
+          reference={this}
+          address={this.state.address}
+          paymentMethods={this.state.payment_methods}
+          currentView={this.state.currentView}
+          updateStateWithValue={this.updateStateWithValue.bind(this)}
+          updateOrderId={this.updateOrderId.bind(this)} />);
       case CheckoutConstants.CONFIRMATION:
-        return (<ConfirmationWidget />);
+        return (<ConfirmationWidget orderId={this.state.orderId} />);
       default:
         return (<AddressWidget />);
     }
@@ -122,6 +144,34 @@ class Checkout extends Component {
         return CheckoutConstants.ADDRESS;
     }
   }
+
+  /**
+   * update shipping mode
+   * @param {*} cCode carrier code
+   * @param {*} mCode method code
+   * @param {*} addr address
+   */
+  updateShippingMode = (cCode, mCode, addr) => {
+    this.setState({ carrier_code: cCode, method_code: mCode, address: addr });
+  }
+
+
+  /**
+   * update payment methods
+   * @param {*} methods payment methods
+   */
+  updatePayementMethods = (methods) => {
+    this.setState({ payment_methods: methods })
+  }
+
+  /**
+ * update order id
+ * @param {*} id order id
+ */
+  updateOrderId = (id) => {
+    this.setState({ orderId: id })
+  }
+
 
 }
 function mapStateToProps(state, ownProps) {
